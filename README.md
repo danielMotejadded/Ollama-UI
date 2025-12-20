@@ -1,16 +1,40 @@
-# React + Vite
+# Ollama Frontend UI 🧠⚡
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, lightweight **frontend UI for Ollama**, built with **React**, **Vite**, and **Tailwind CSS**.  
+The goal of this project is to provide a fast, clean, and customizable web interface for interacting with Ollama models via their API.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Features
 
-## React Compiler
+- ⚛️ **React + Vite** — fast development & build times
+- 🎨 **Tailwind CSS** — clean, responsive UI
+- 🔌 **Ollama API integration** — communicate directly with local models
+- 🧠 **Model selection & prompt input**
+- 💬 **Chat-style interface**
+- ⚡ **Minimal & performant** by design
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🧩 Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **React**
+- **Vite**
+- **Tailwind CSS**
+- **JavaScript (ES6+)**
+- **Ollama REST API**
+
+---
+
+## 📦 Requirements
+
+- **Node.js** (v18+ recommended)
+- **npm**
+- **Ollama** installed and running locally
+
+Verify Ollama:
+```bash
+ollama list
+
+
+
