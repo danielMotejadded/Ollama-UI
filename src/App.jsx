@@ -9,7 +9,7 @@ function App() {
         <div className="h-full">
           <Aside />
         </div>
-        <div className="w-full flex flex-col">
+        <div className="w-full flex flex-col overflow-hidden">
           <Navbar />
           <Main />
         </div>

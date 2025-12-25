@@ -1,70 +1,46 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { generateStreaming } from "../API/api";
-import { useRef } from "react";
+import ReactMarkdown from "react-markdown";
+
+import CodeBlock from "./CodeBlock";
+import Input from "./Input";
+
 export default function Main() {
   const [answer, setAnswer] = useState("");
-  const [question, setQuestion] = useState("");
-  const input = useRef();
-  const checkInput = (e) => {
-    setQuestion(e.target.value);
-  };
-
-  const handleGenerate = async (prompt) => {
-    setAnswer("");
-    input.current.value = "";
-    try {
-      await generateStreaming(prompt, (token) => {
-        setAnswer((prev) => prev + token);
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   return (
-    <main className="flex-1 p-4">
-      <div className="w-2/3 m-auto h-3/5">
-        <pre className="mt-4 whitespace-pre-wrap p-16 text-md">{answer}</pre>
-      </div>
+    <main className="flex flex-col flex-1 bg-zinc-800 overflow-hidden">
+      <div className="flex-1 overflow-y-auto px-6 py-8">
+        <div className="w-2/3 mx-auto space-y-6 text-white">
+          <ReactMarkdown
+            components={{
+              code({ inline, className, children }) {
+                const match = /language-(\w+)/.exec(className || "");
+                const language = match ? match[1] : "text";
 
-      <div className=" w-2/3 m-auto text-center h-2/5">
-        <label className="block mb-4 text-2xl text-heading">
-          How can I help you?
-        </label>
-        <div className="flex gap-6">
-          <input
-            ref={input}
-            onChange={(e) => {
-              checkInput(e);
+                if (inline) {
+                  return (
+                    <code className="bg-zinc-700 px-1 py-0.5 rounded text-sm">
+                      {children}
+                    </code>
+                  );
+                }
+
+                return (
+                  <CodeBlock
+                    code={String(children).replace(/\n$/, "")}
+                    language={language}
+                  />
+                );
+              },
             }}
-            type="text"
-            placeholder="Ask me anything..."
-            className="
-                  w-full
-                  rounded-xl
-                  bg-zinc-900
-                  border
-                  border-zinc-700
-                  px-4
-                  py-6
-                  text-xl
-                  text-zinc-100
-                  placeholder-zinc-500
-                  outline-none
-                  transition
-                  duration-200
-                  focus:border-white
-                  focus:ring-1
-                  focus:ring-white
-                "
-          />
-          <button onClick={() => handleGenerate(question)}>
-            <span className="">
-              <i className="fa-solid fa-arrow-up fa-2xl"></i>
-            </span>
-          </button>
+          >
+            {answer}
+          </ReactMarkdown>
         </div>
       </div>
+
+      <Input setAnswer={setAnswer} />
     </main>
   );
 }
