@@ -1,3 +1,5 @@
+let currentCntext = null;
+
 export const generateStreaming = async (prompt, onToken) => {
   const response = await fetch("http://localhost:11434/api/generate", {
     method: "POST",
@@ -5,6 +7,7 @@ export const generateStreaming = async (prompt, onToken) => {
     body: JSON.stringify({
       model: "qwen3-coder",
       prompt,
+      context: currentCntext ?? undefined,
     }),
   });
 
@@ -32,6 +35,9 @@ export const generateStreaming = async (prompt, onToken) => {
       }
 
       if (json.done) {
+        if (json.context) {
+          currentCntext = json.context;
+        }
         return;
       }
     }
