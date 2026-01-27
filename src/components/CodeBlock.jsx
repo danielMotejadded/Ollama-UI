@@ -12,7 +12,7 @@ export default function CodeBlock({ code, language }) {
 
   return (
     <div className="relative my-6">
-      {/* COPY BUTTON */}
+     
       <button
         onClick={copy}
         className="
