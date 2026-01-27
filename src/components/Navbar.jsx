@@ -1,4 +1,3 @@
-import Logo from "../assets/logo.png";
 export default function Navbar() {
   return (
     <nav className=" w-full">
