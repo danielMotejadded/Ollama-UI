@@ -61,7 +61,7 @@ Rules:
       context: context ?? undefined,
     }),
   });
-
+console.log('funny')
   if (!response.ok) {
     throw new Error("Failed to generate chat title");
   }
