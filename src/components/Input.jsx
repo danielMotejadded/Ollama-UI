@@ -9,7 +9,7 @@ export default function Input({ setChats, activeChat }) {
   const checkInput = (e) => {
     setQuestion(e.target.value);
   };
-
+  const showLabelCondition = activeChat.messages.length === 0;
   const handleGenerate = async (prompt) => {
     input.current.value = "";
     const userId = crypto.randomUUID();
@@ -37,23 +37,20 @@ export default function Input({ setChats, activeChat }) {
       ),
     );
 
-  await generateStreaming(
-  prompt,
-  activeChat.context,
-  token => {
-    appendToken(assistantId, token);
-  },
-  newContext => {
-    setChats(prev =>
-      prev.map(chat =>
-        chat.id === activeChat.id
-          ? { ...chat, context: newContext }
-          : chat
-      )
+    await generateStreaming(
+      prompt,
+      activeChat.context,
+      (token) => {
+        appendToken(assistantId, token);
+      },
+      (newContext) => {
+        setChats((prev) =>
+          prev.map((chat) =>
+            chat.id === activeChat.id ? { ...chat, context: newContext } : chat,
+          ),
+        );
+      },
     );
-  }
-);
-
   };
 
   const appendToken = (messageId, token) => {
@@ -85,9 +82,11 @@ export default function Input({ setChats, activeChat }) {
   return (
     <div className="shrink-0 py-6">
       <div className="w-2/3 mx-auto text-center">
-        <label className="block mb-4 text-2xl text-white">
-          How can I help you?
-        </label>
+        {showLabelCondition && (
+          <label className="block mb-4 text-2xl text-white">
+            How can I help you?
+          </label>
+        )}
 
         <div className="flex gap-6">
           <textarea

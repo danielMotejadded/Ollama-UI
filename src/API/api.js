@@ -3,7 +3,7 @@ export const generateStreaming = async (prompt, context, onToken, onDone) => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "qwen3-coder",
+      model: "qwen3-coder:30b",
       prompt: prompt,
       context: context ?? undefined,
     }),
@@ -38,4 +38,35 @@ export const generateStreaming = async (prompt, context, onToken, onDone) => {
       }
     }
   }
+};
+export const generateTitle = async (context) => {
+  console.log(context);
+  const response = await fetch("http://localhost:11434/api/generate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "qwen3-coder:30b",
+      stream: false,
+      prompt: `
+Create a short title for this chat.
+
+Rules:
+- Maximum 5 words
+- Return only the title
+- No quotes
+- No period at the end
+- Use the same language as the user's message`,
+      context: context ?? undefined,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to generate chat title");
+  }
+
+  const data = await response.json();
+
+  return data.response.trim();
 };

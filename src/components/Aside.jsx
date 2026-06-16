@@ -26,7 +26,7 @@ export default function Aside({
         onClick={onNewChat}
         className="mt-6 w-full rounded bg-zinc-800 px-3 py-2 text-left hover:bg-zinc-700"
       >
-        + Nowy czat
+        + Utwórz nowy czat
       </button>
 
       <ul className="mt-4 space-y-1">

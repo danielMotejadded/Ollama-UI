@@ -2,6 +2,7 @@ import Input from "./Input";
 import ChatMessage from "./ChatMessage";
 
 export default function Main({ activeChat, setChats }) {
+  
   if (!activeChat) {
     return (
       <div className="flex-1 flex items-center justify-center text-zinc-400">
