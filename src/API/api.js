@@ -40,7 +40,6 @@ export const generateStreaming = async (prompt, context, onToken, onDone) => {
   }
 };
 export const generateTitle = async (context) => {
-  console.log(context);
   const response = await fetch("http://localhost:11434/api/generate", {
     method: "POST",
     headers: {

@@ -16,6 +16,7 @@ function App() {
   return (
     <div className="flex h-screen w-screen">
       <Aside
+        activeChat={activeChat}
         chats={chats}
         activeChatId={activeChatId}
         onNewChat={createNewChat}

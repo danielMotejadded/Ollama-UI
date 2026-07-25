@@ -1,5 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import CodeBlockWithCopy from "./CodeBlockWithCopy";
+import { useEffect, useRef } from "react";
 
 export default function ChatMessage({ message }) {
   if (message.role === "user") {
