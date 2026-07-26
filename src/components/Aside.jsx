@@ -7,7 +7,10 @@ export default function Aside({
   onSelectChat,
   activeChat,
 }) {
-  const buttonDisabled = activeChat.messages.length <= 0;
+  // console.log(chats.find((el) => el.id === "default"));
+  const buttonDisabled =
+    activeChat.messages.length <= 0 ||
+    chats.find((el) => el.id !== "default")?.messages.length <= 0;
 
   return (
     <aside className="w-64 bg-zinc-900 p-4 text-white h-full">

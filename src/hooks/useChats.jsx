@@ -17,11 +17,11 @@ export function useChats() {
     return chatObjectsArray;
   };
   const [chats, setChats] = useState(stateInitializer);
-
+  console.log(chats);
   const [activeChatId, setActiveChatId] = useState("default");
 
   const activeChat = chats.find((c) => c.id === activeChatId);
-  
+
   const createNewChat = async () => {
     if (activeChat.messages.length <= 0) return;
     const id = crypto.randomUUID();

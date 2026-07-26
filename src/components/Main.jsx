@@ -1,9 +1,11 @@
 import Input from "./Input";
 import ChatMessage from "./ChatMessage";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import useAutomaticScroll from "../hooks/useAutomaticScroll";
 
 export default function Main({ activeChat, setChats }) {
-
+  const messagesRef = useRef(null);
+  useAutomaticScroll(messagesRef, activeChat);
   if (!activeChat) {
     return (
       <div className="flex-1 flex items-center justify-center text-zinc-400">
@@ -17,7 +19,7 @@ export default function Main({ activeChat, setChats }) {
       <div className="flex-1 overflow-y-auto px-6 py-8">
         <div
           className="w-2/3 mx-auto space-y-6 text-white mb-6"
-          
+          ref={messagesRef}
         >
           {activeChat.messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg} />
