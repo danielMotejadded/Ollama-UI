@@ -1,27 +1,35 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { generateTitle } from "../API/api";
 
 export function useChats() {
-  const [chats, setChats] = useState([
+  const chatObjectsArray = [
     {
       id: "default",
-      title: "Chat",
+      title: "Current chat",
       messages: [],
       context: null,
     },
-  ]);
+  ];
 
+  const stateInitializer = () => {
+    const chats = localStorage.getItem("chats");
+    if (chats) return chatObjectsArray;
+    return chatObjectsArray;
+  };
+  const [chats, setChats] = useState(stateInitializer);
+  console.log(chats);
   const [activeChatId, setActiveChatId] = useState("default");
 
   const activeChat = chats.find((c) => c.id === activeChatId);
 
   const createNewChat = async () => {
+    if (activeChat.messages.length <= 0) return;
     const id = crypto.randomUUID();
     const title = await generateTitle(activeChat.context);
     activeChat.title = title;
     const newChat = {
       id,
-      title: "Nowy czat",
+      title: "Current chat",
       messages: [],
       context: null,
     };
@@ -29,6 +37,10 @@ export function useChats() {
     setChats((prev) => [newChat, ...prev]);
     setActiveChatId(id);
   };
+
+  useEffect(() => {
+    localStorage.setItem("chats", JSON.stringify(chats));
+  }, [chats]);
 
   return {
     chats,

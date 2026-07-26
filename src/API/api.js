@@ -40,7 +40,6 @@ export const generateStreaming = async (prompt, context, onToken, onDone) => {
   }
 };
 export const generateTitle = async (context) => {
-  console.log(context);
   const response = await fetch("http://localhost:11434/api/generate", {
     method: "POST",
     headers: {
@@ -61,7 +60,6 @@ Rules:
       context: context ?? undefined,
     }),
   });
-console.log('funny')
   if (!response.ok) {
     throw new Error("Failed to generate chat title");
   }
