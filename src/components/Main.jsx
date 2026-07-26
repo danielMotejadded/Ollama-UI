@@ -1,15 +1,11 @@
 import Input from "./Input";
 import ChatMessage from "./ChatMessage";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import useAutomaticScroll from "../hooks/useAutomaticScroll";
 
 export default function Main({ activeChat, setChats }) {
   const messagesRef = useRef(null);
-  useEffect(() => {
-    messagesRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "end",
-    });
-  }, [activeChat.messages]);
+  useAutomaticScroll(messagesRef, activeChat);
   if (!activeChat) {
     return (
       <div className="flex-1 flex items-center justify-center text-zinc-400">

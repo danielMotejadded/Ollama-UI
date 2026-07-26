@@ -13,7 +13,7 @@ export function useChats() {
 
   const stateInitializer = () => {
     const chats = localStorage.getItem("chats");
-    if (chats) return chatObjectsArray;
+    if (chats) return JSON.parse(chats);
     return chatObjectsArray;
   };
   const [chats, setChats] = useState(stateInitializer);
