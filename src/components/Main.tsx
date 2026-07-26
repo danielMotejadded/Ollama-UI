@@ -1,0 +1,40 @@
+import Input from "./Input";
+import ChatMessage from "./ChatMessage";
+import { Dispatch, RefObject, SetStateAction, useRef } from "react";
+import useAutomaticScroll from "../hooks/useAutomaticScroll";
+import { Chat } from "../types/Chat";
+
+
+type MainProps = {
+  activeChat: Chat | undefined;
+  setChats: Dispatch<SetStateAction<Chat[]>>;
+};
+
+export default function Main({ activeChat, setChats }: MainProps) {
+  const messagesRef = useRef<HTMLDivElement | null>(null);
+  useAutomaticScroll(messagesRef, activeChat);
+  if (!activeChat) {
+    return (
+      <div className="flex-1 flex items-center justify-center text-zinc-400">
+        No chat selected
+      </div>
+    );
+  }
+
+  return (
+    <main className="flex flex-col flex-1 bg-zinc-800 overflow-hidden">
+      <div className="flex-1 overflow-y-auto px-6 py-8">
+        <div
+          className="w-2/3 mx-auto space-y-6 text-white mb-6"
+          ref={messagesRef}
+        >
+          {activeChat.messages.map((msg) => (
+            <ChatMessage key={msg.id} message={msg} />
+          ))}
+        </div>
+      </div>
+
+      <Input setChats={setChats} activeChat={activeChat} />
+    </main>
+  );
+}
