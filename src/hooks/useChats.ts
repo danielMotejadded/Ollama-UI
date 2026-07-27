@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { generateTitle } from "../API/api";
 import { Chat } from "../types/Chat";
+import { Guid } from "../types/Guid";
 
 export function useChats() {
   const chatObjectsArray: Chat[] = [
@@ -19,7 +20,7 @@ export function useChats() {
   };
   const [chats, setChats] = useState<Chat[]>(stateInitializer);
 
-  const [activeChatId, setActiveChatId] = useState("default");
+  const [activeChatId, setActiveChatId] = useState<Guid | string>("default");
 
   const activeChat = chats.find((c) => c.id === activeChatId);
 

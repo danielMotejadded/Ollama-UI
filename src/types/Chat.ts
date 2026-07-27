@@ -1,10 +1,13 @@
-type Message = {
+import { Guid } from "./Guid"
+
+export type Message = {
+    id: Guid
     role: "user" | "assistant"
     content: string
 }
 export type Chat = {
-    id: string,
-    title: string;
-    messages: Message[];
-    context: number[] | null;
+    id: Guid,
+    title: string,
+    messages: Message[],
+    context: number[] | null
 }
