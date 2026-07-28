@@ -1,4 +1,14 @@
 import Logo from "../assets/logo.png";
+import { Chat } from "../types/Chat";
+import { Guid } from "../types/Guid";
+
+type AsideProps = {
+  chats: Chat[] | undefined;
+  activeChatId: Guid;
+  onNewChat: () => void;
+  onSelectChat: (id: Guid) => void;
+  activeChat: Chat;
+}
 
 export default function Aside({
   chats,
@@ -6,11 +16,11 @@ export default function Aside({
   onNewChat,
   onSelectChat,
   activeChat,
-}) {
+}: AsideProps) {
   // console.log(chats.find((el) => el.id === "default"));
   const buttonDisabled =
     activeChat.messages.length <= 0 ||
-    chats.find((el) => el.id !== "default")?.messages.length <= 0;
+    (chats?.find((el) => el.id !== "default")?.messages.length ?? 0) <= 0;
 
   return (
     <aside className="w-64 bg-zinc-900 p-4 text-white h-full">
@@ -33,15 +43,14 @@ export default function Aside({
       </button>
 
       <ul className="mt-4 space-y-1">
-        {chats.map((chat) => (
+        {chats?.map((chat) => (
           <li key={chat.id}>
             <button
               onClick={() => onSelectChat(chat.id)}
-              className={`w-full text-left rounded px-3 py-2 ${
-                chat.id === activeChatId
-                  ? "bg-yellow-500 text-black"
-                  : "hover:bg-zinc-800"
-              }`}
+              className={`w-full text-left rounded px-3 py-2 ${chat.id === activeChatId
+                ? "bg-yellow-500 text-black"
+                : "hover:bg-zinc-800"
+                }`}
             >
               {chat.title}
             </button>

@@ -1,10 +1,17 @@
 import Input from "./Input";
 import ChatMessage from "./ChatMessage";
-import { useRef } from "react";
+import { Dispatch, RefObject, SetStateAction, useRef } from "react";
 import useAutomaticScroll from "../hooks/useAutomaticScroll";
+import { Chat } from "../types/Chat";
 
-export default function Main({ activeChat, setChats }) {
-  const messagesRef = useRef(null);
+
+type MainProps = {
+  activeChat: Chat | undefined;
+  setChats: Dispatch<SetStateAction<Chat[]>>;
+};
+
+export default function Main({ activeChat, setChats }: MainProps) {
+  const messagesRef = useRef<HTMLDivElement | null>(null);
   useAutomaticScroll(messagesRef, activeChat);
   if (!activeChat) {
     return (

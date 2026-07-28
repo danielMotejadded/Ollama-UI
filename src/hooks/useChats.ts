@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { generateTitle } from "../API/api";
+import { Chat } from "../types/Chat";
+import { Guid } from "../types/Guid";
 
 export function useChats() {
-  const chatObjectsArray = [
+  const chatObjectsArray: Chat[] = [
     {
       id: "default",
       title: "Current chat",
@@ -11,23 +13,23 @@ export function useChats() {
     },
   ];
 
-  const stateInitializer = () => {
+  const stateInitializer = (): Chat[] => {
     const chats = localStorage.getItem("chats");
     if (chats) return JSON.parse(chats);
     return chatObjectsArray;
   };
-  const [chats, setChats] = useState(stateInitializer);
-  console.log(chats);
-  const [activeChatId, setActiveChatId] = useState("default");
+  const [chats, setChats] = useState<Chat[]>(stateInitializer);
+
+  const [activeChatId, setActiveChatId] = useState<Guid | string>("default");
 
   const activeChat = chats.find((c) => c.id === activeChatId);
 
   const createNewChat = async () => {
-    if (activeChat.messages.length <= 0) return;
+    if (!activeChat || activeChat.messages.length <= 0) return;
     const id = crypto.randomUUID();
     const title = await generateTitle(activeChat.context);
     activeChat.title = title;
-    const newChat = {
+    const newChat: Chat = {
       id,
       title: "Current chat",
       messages: [],
