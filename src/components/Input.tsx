@@ -1,38 +1,78 @@
-import { useState, useRef } from "react";
+import {
+  useRef,
+  useState,
+  type ChangeEvent,
+  type Dispatch,
+  type KeyboardEvent,
+  type SetStateAction,
+} from "react";
 import { generateStreaming } from "../API/api";
+import type { Chat, Message } from "../types/Chat";
+import { createGuid } from "../types/Guid";
+import type { Guid } from "../types/Guid";
 
-export default function Input({ setChats, activeChat }) {
-  const input = useRef();
+type InputProps = {
+  activeChat: Chat | undefined;
+  setChats: Dispatch<SetStateAction<Chat[]>>;
+};
 
+export default function Input({ setChats, activeChat }: InputProps) {
+  const input = useRef<HTMLTextAreaElement>(null);
   const [question, setQuestion] = useState("");
 
-  const checkInput = (e) => {
+  const checkInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setQuestion(e.target.value);
   };
-  const showLabelCondition = activeChat.messages.length === 0;
-  const handleGenerate = async (prompt) => {
-    input.current.value = "";
-    const userId = crypto.randomUUID();
-    const assistantId = crypto.randomUUID();
 
-    const userMsg = {
-      id: userId,
+  const showLabelCondition = activeChat?.messages.length === 0;
+
+  const appendToken = (
+    chatId: Guid,
+    messageId: Guid,
+    token: string,
+  ) => {
+    setChats((prev) =>
+      prev.map((chat) =>
+        chat.id !== chatId
+          ? chat
+          : {
+            ...chat,
+            messages: chat.messages.map((msg) =>
+              msg.id === messageId
+                ? { ...msg, content: msg.content + token }
+                : msg,
+            ),
+          },
+      ),
+    );
+  };
+
+  const handleGenerate = async (prompt: string) => {
+    if (!activeChat || prompt.trim() === "") return;
+
+    const chatId = activeChat.id;
+
+    const userMsg: Message = {
+      id: createGuid(),
       role: "user",
       content: prompt,
     };
-    const assistantMsg = {
-      id: assistantId,
+
+    const assistantMsg: Message = {
+      id: createGuid(),
       role: "assistant",
       content: "",
     };
 
+    setQuestion("");
+
     setChats((prev) =>
       prev.map((chat) =>
-        chat.id === activeChat.id
+        chat.id === chatId
           ? {
-              ...chat,
-              messages: [...chat.messages, userMsg, assistantMsg],
-            }
+            ...chat,
+            messages: [...chat.messages, userMsg, assistantMsg],
+          }
           : chat,
       ),
     );
@@ -40,50 +80,41 @@ export default function Input({ setChats, activeChat }) {
     await generateStreaming(
       prompt,
       activeChat.context,
-      (token) => {
-        appendToken(assistantId, token);
+      (token: string) => {
+        appendToken(chatId, assistantMsg.id, token);
       },
-      (newContext) => {
+      (newContext: number[]) => {
         setChats((prev) =>
           prev.map((chat) =>
-            chat.id === activeChat.id ? { ...chat, context: newContext } : chat,
+            chat.id === chatId
+              ? { ...chat, context: newContext }
+              : chat,
           ),
         );
       },
     );
   };
 
-  const appendToken = (messageId, token) => {
-    setChats((prev) =>
-      prev.map((chat) =>
-        chat.id !== activeChat.id
-          ? chat
-          : {
-              ...chat,
-              messages: chat.messages.map((msg) =>
-                msg.id === messageId
-                  ? { ...msg, content: msg.content + token }
-                  : msg,
-              ),
-            },
-      ),
-    );
-  };
-  const handleKeyDown = (e) => {
-    if (e.isComposing) return;
+  const handleKeyDown = (
+    e: KeyboardEvent<HTMLTextAreaElement>,
+  ) => {
+    if (e.nativeEvent.isComposing) return;
 
-    if (e.key === "Enter" && question.trim() !== "" && !e.shiftKey) {
+    if (
+      e.key === "Enter" &&
+      question.trim() !== "" &&
+      !e.shiftKey
+    ) {
       e.preventDefault();
-      handleGenerate(question);
-      setQuestion("");
+      void handleGenerate(question);
     }
   };
 
   return (
     <div className="shrink-0 py-6">
-      <div className="w-2/3 mx-auto text-center">
+      <div className="mx-auto w-2/3 text-center">
         {showLabelCondition && (
-          <label className="block mb-4 text-2xl text-white">
+          <label className="mb-4 block text-2xl text-white">
             How can I help you?
           </label>
         )}
@@ -93,27 +124,30 @@ export default function Input({ setChats, activeChat }) {
             ref={input}
             value={question}
             onChange={checkInput}
-            onKeyDown={(e) => handleKeyDown(e)}
-            type="text"
+            onKeyDown={handleKeyDown}
             placeholder="Ask me anything..."
             className="
-           w-full
-    h-14
-    px-6
-    py-0
-    rounded-full
-    bg-zinc-600
-    text-white
-    text-base
-    leading-[3.5rem]
-    placeholder:text-zinc-300
-    resize-none
-    outline-none
-              "
+              h-14
+              w-full
+              resize-none
+              rounded-full
+              bg-zinc-600
+              px-6
+              py-0
+              text-base
+              leading-[3.5rem]
+              text-white
+              outline-none
+              placeholder:text-zinc-300
+            "
           />
 
-          <button onClick={() => handleGenerate(question)}>
-            <i className="fa-solid fa-arrow-up fa-2xl text-white"></i>
+          <button
+            type="button"
+            disabled={!activeChat || question.trim() === ""}
+            onClick={() => void handleGenerate(question)}
+          >
+            <i className="fa-solid fa-arrow-up fa-2xl text-white" />
           </button>
         </div>
       </div>
