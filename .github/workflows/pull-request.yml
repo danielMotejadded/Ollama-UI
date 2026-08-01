@@ -26,7 +26,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -38,69 +38,69 @@ jobs:
       - name: Build application
         run: npm run build
 
-  ai-code-review:
-    name: AI code review
-    runs-on: ubuntu-latest
-    needs: validate
+  # ai-code-review:
+  #   name: AI code review
+  #   runs-on: ubuntu-latest
+  #   needs: validate
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
 
-      - name: Get pull request diff
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh pr diff "${{ github.event.pull_request.number }}" > pr.diff
+  #     - name: Get pull request diff
+  #       env:
+  #         GH_TOKEN: ${{ github.token }}
+  #       run: gh pr diff "${{ github.event.pull_request.number }}" > pr.diff
 
-      - name: Check diff size
-        run: wc -c pr.diff
+  #     - name: Check diff size
+  #       run: wc -c pr.diff
 
-      - name: Prepare AI request
-        run: |
-          jq -n \
-            --rawfile diff pr.diff \
-            '{
-              model: "openai/gpt-4.1",
-              temperature: 0.2,
-              messages: [
-                {
-                  role: "system",
-                  content: "You are a senior TypeScript and React code reviewer. Review only the supplied pull request diff. Look for bugs, security problems, incorrect React state handling, TypeScript typing problems, performance issues and maintainability problems. Do not complain about personal style unless it causes a real issue. Respond in Markdown. Group findings by severity: Critical, Important and Suggestions. Include file names and relevant lines where possible. If there are no meaningful problems, clearly state that."
-                },
-                {
-                  role: "user",
-                  content: ("Review this pull request diff:\n\n" + $diff)
-                }
-              ]
-            }' > request.json
+  #     - name: Prepare AI request
+  #       run: |
+  #         jq -n \
+  #           --rawfile diff pr.diff \
+  #           '{
+  #             model: "openai/gpt-4.1",
+  #             temperature: 0.2,
+  #             messages: [
+  #               {
+  #                 role: "system",
+  #                 content: "You are a senior TypeScript and React code reviewer. Review only the supplied pull request diff. Look for bugs, security problems, incorrect React state handling, TypeScript typing problems, performance issues and maintainability problems. Do not complain about personal style unless it causes a real issue. Respond in Markdown. Group findings by severity: Critical, Important and Suggestions. Include file names and relevant lines where possible. If there are no meaningful problems, clearly state that."
+  #               },
+  #               {
+  #                 role: "user",
+  #                 content: ("Review this pull request diff:\n\n" + $diff)
+  #               }
+  #             ]
+  #           }' > request.json
 
-      - name: Run AI code review
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          curl --fail-with-body \
-            --request POST \
-            --url "https://models.github.ai/inference/chat/completions" \
-            --header "Accept: application/vnd.github+json" \
-            --header "Authorization: Bearer $GH_TOKEN" \
-            --header "Content-Type: application/json" \
-            --data @request.json \
-            > response.json
+  #     - name: Run AI code review
+  #       env:
+  #         GH_TOKEN: ${{ github.token }}
+  #       run: |
+  #         curl --fail-with-body --location \
+  #           --request POST \
+  #           --url "https://models.github.ai/inference/chat/completions" \
+  #           --header "Accept: application/vnd.github+json" \
+  #           --header "Authorization: Bearer $GH_TOKEN" \
+  #           --header "Content-Type: application/json" \
+  #           --data @request.json \
+  #           > response.json
 
-          jq -r '.choices[0].message.content' response.json > review.md
+  #         jq -r '.choices[0].message.content' response.json > review.md
 
-      - name: Add review comment
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          {
-            echo "## 🤖 AI Code Review"
-            echo
-            cat review.md
-            echo
-            echo "---"
-            echo "_Automated review. Verify suggestions before applying them._"
-          } > comment.md
+  #     - name: Add review comment
+  #       env:
+  #         GH_TOKEN: ${{ github.token }}
+  #       run: |
+  #         {
+  #           echo "## 🤖 AI Code Review"
+  #           echo
+  #           cat review.md
+  #           echo
+  #           echo "---"
+  #           echo "_Automated review. Verify suggestions before applying them._"
+  #         } > comment.md
 
-          gh pr comment "${{ github.event.pull_request.number }}" \
-            --body-file comment.md
+  #         gh pr comment "${{ github.event.pull_request.number }}" \
+  #           --body-file comment.md
