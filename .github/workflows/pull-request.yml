@@ -78,7 +78,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          curl --fail-with-body \
+          curl --fail-with-body --location \
             --request POST \
             --url "https://models.github.ai/inference/chat/completions" \
             --header "Accept: application/vnd.github+json" \
