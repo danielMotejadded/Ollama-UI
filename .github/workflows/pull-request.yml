@@ -26,7 +26,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -50,12 +50,10 @@ jobs:
       - name: Get pull request diff
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          gh pr diff "${{ github.event.pull_request.number }}" > pr.diff
+        run: gh pr diff "${{ github.event.pull_request.number }}" > pr.diff
 
       - name: Check diff size
-        run: |
-          wc -c pr.diff
+        run: wc -c pr.diff
 
       - name: Prepare AI request
         run: |
